@@ -1,0 +1,16 @@
+[
+{
+  "modid": "effectinfo",
+  "name": "Potion Effect Info",
+  "description": "Potion Effect Info",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["3DPinball","Sliver"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
