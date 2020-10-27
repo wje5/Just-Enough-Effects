@@ -73,7 +73,7 @@ public class Render {
 				if (!potion.shouldRender(e)) {
 					continue;
 				}
-				if (event.getMouseY() - y > 0 && event.getMouseY() - y < l) {
+				if (event.getMouseY() - y > 0 && event.getMouseY() - y < l && canRender(e)) {
 					render(e, x, y, screen);
 					return;
 				}
@@ -82,12 +82,21 @@ public class Render {
 		}
 	}
 
+	public static boolean canRender(PotionEffect e) {
+		for (int i = 0; i < 5; i++) {
+			String key = e.getEffectName() + "." + i + ".desc";
+			if (I18n.hasKey(key)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static void render(PotionEffect effect, int x, int y, InventoryEffectRenderer screen) {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
 		GlStateManager.pushMatrix();
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.translate(0, 0, 100F);
-		Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, 120, 120, 256, 256);
 		FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
 		int amp = effect.getAmplifier();
 		String[] desc = new String[5];
@@ -101,25 +110,33 @@ public class Render {
 		}
 		int yOffset = y + 30;
 		int yOffsetTemp = 0;
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i <= max; i++) {
 			String s = desc[i];
 			if (s != null) {
 				int yPos = yOffsetTemp == 0 ? yOffset : yOffsetTemp;
 				fr.drawSplitString(s, x + 30, yPos, 85, 0xFFFFFF);
+				int height = yPos + fr.getWordWrappedHeight(s, 85) - yOffset;
 				if (yPos != y + 30) {
 					Gui.drawRect(x + 7, yPos - 5, x + 115, yPos - 4, 0xFF7F7F7F);
 					GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 				}
-				yOffsetTemp = 0;
-			} else if (yOffsetTemp == 0) {
-				yOffsetTemp = yOffset;
-			}
-			if (i <= max) {
 				Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
 				Gui.drawModalRectWithCustomSizedTexture(x + 10, yOffset, 120, i * 16, 18, 16, 256, 256);
+				height = height < 16 ? 16 : height;
+				yOffsetTemp = 0;
+				yOffset += height + 9;
+			} else {
+				if (yOffsetTemp == 0) {
+					yOffsetTemp = yOffset;
+				}
+				if (i <= max) {
+					Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
+					Gui.drawModalRectWithCustomSizedTexture(x + 10, yOffset, 120, i * 16, 18, 16, 256, 256);
+				}
+				yOffset += 20;
 			}
-			yOffset += s == null ? 20 : 25;
 		}
+		drawRect(x, y, yOffset - y);
 		Potion potion = effect.getPotion();
 		if (potion.hasStatusIcon()) {
 			int i1 = potion.getStatusIconIndex();
@@ -140,14 +157,16 @@ public class Render {
 			String s = Potion.getPotionDurationString(effect, 1.0F);
 			fr.drawStringWithShadow(s, x + 28, y + 6 + 10, 0x7F7F7F);
 		}
-//		String s = I18n.format("enchantment.level.1");
-//		fr.drawStringWithShadow(s, x + 15 - fr.getStringWidth(s) / 2, y + 20, 0xFFFFFF);
-//		s = I18n.format("enchantment.level.2");
-//		fr.drawStringWithShadow(s, x + 15 - fr.getStringWidth(s) / 2, y + 27, 0xFFFFFF);
-//		s = I18n.format("enchantment.level.3");
-//		fr.drawStringWithShadow(s, x + 15 - fr.getStringWidth(s) / 2, y + 34, 0xFFFFFF);
-//		s = I18n.format("enchantment.level.4");
-//		fr.drawStringWithShadow(s, x + 15 - fr.getStringWidth(s) / 2, y + 41, 0xFFFFFF);
+		GlStateManager.popMatrix();
+	}
+
+	public static void drawRect(int x, int y, int height) {
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(0, 0, -50F);
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
+		Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, 120, height - 4, 256, 256);
+		Gui.drawModalRectWithCustomSizedTexture(x, y + height - 4, 0, 252, 120, 4, 256, 256);
 		GlStateManager.popMatrix();
 	}
 }
