@@ -121,7 +121,8 @@ public class Render {
 					GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 				}
 				Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
-				Gui.drawModalRectWithCustomSizedTexture(x + 10, yOffset, 120, i * 16, 18, 16, 256, 256);
+				Gui.drawModalRectWithCustomSizedTexture(x + 10, yOffset, amp == i ? 138 : 120, i * 16, 18, 16, 256,
+						256);
 				height = height < 16 ? 16 : height;
 				yOffsetTemp = 0;
 				yOffset += height + 9;
@@ -131,7 +132,8 @@ public class Render {
 				}
 				if (i <= max) {
 					Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
-					Gui.drawModalRectWithCustomSizedTexture(x + 10, yOffset, 120, i * 16, 18, 16, 256, 256);
+					Gui.drawModalRectWithCustomSizedTexture(x + 10, yOffset, amp == i ? 138 : 120, i * 16, 18, 16, 256,
+							256);
 				}
 				yOffset += 20;
 			}
